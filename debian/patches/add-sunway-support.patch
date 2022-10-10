@@ -1,0 +1,68 @@
+Description: add sunway support
+Author: Miao Changwei <miaochangwei@uniontech.com>
+
+---
+Last-Update: 2022-05-19
+
+--- libiberty-20211102.orig/include/longlong.h
++++ libiberty-20211102/include/longlong.h
+@@ -1606,6 +1606,59 @@ extern UHItype __stormy16_count_leading_
+   } while (0)
+ #endif /* __z8000__ */
+ 
++#if defined (__sw_64) && W_TYPE_SIZE == 64
++/* There is a bug in g++ before version 5 that
++   errors on __builtin_sw_64_umulh.  */
++#if !defined(__cplusplus) || __GNUC__ >= 5
++#define umul_ppmm(ph, pl, m0, m1) \
++  do {									\
++    UDItype __m0 = (m0), __m1 = (m1);					\
++    (ph) = __builtin_sw_64_umulh (__m0, __m1);				\
++    (pl) = __m0 * __m1;							\
++  } while (0)
++#define UMUL_TIME 46
++#endif /* !c++ */
++#ifndef LONGLONG_STANDALONE
++#define udiv_qrnnd(q, r, n1, n0, d) \
++  do { UDItype __r;							\
++    (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
++    (r) = __r;								\
++  } while (0)
++extern UDItype __udiv_qrnnd (UDItype *, UDItype, UDItype, UDItype);
++#define UDIV_TIME 220
++#endif /* LONGLONG_STANDALONE */
++#ifdef __sw_64_cix__
++#define count_leading_zeros(COUNT,X)	((COUNT) = __builtin_clzl (X))
++#define count_trailing_zeros(COUNT,X)	((COUNT) = __builtin_ctzl (X))
++#define COUNT_LEADING_ZEROS_0 64
++#else
++#define count_leading_zeros(COUNT,X) \
++  do {									\
++    UDItype __xr = (X), __t, __a;					\
++    __t = __builtin_sw_64_cmpgeb (0, __xr);				\
++    __a = __clz_tab[__t ^ 0xff] - 1;					\
++    __t = __builtin_sw_64_ext0b (__xr, __a);				\
++    (COUNT) = 64 - (__clz_tab[__t] + __a*8);				\
++  } while (0)
++#define count_trailing_zeros(COUNT,X) \
++  do {									\
++    UDItype __xr = (X), __t, __a;					\
++    __t = __builtin_sw_64_cmpgeb (0, __xr);				\
++    __t = ~__t & -~__t;							\
++    __a = ((__t & 0xCC) != 0) * 2;					\
++    __a += ((__t & 0xF0) != 0) * 4;					\
++    __a += ((__t & 0xAA) != 0);						\
++    __t = __builtin_alpha_ext0b (__xr, __a);				\
++    __a <<= 3;								\
++    __t &= -__t;							\
++    __a += ((__t & 0xCC) != 0) * 2;					\
++    __a += ((__t & 0xF0) != 0) * 4;					\
++    __a += ((__t & 0xAA) != 0);						\
++    (COUNT) = __a;							\
++  } while (0)
++#endif /* __sw_64_cix__ */
++#endif /* __sw_64 */
++
+ #endif /* __GNUC__ */
+ 
+ /* If this machine has no inline assembler, use C macros.  */

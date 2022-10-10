@@ -1,0 +1,34 @@
+#Author: renyehui <renyehui@uniontech.com>  
+#Date: Thu, 23 Jun 2022 11:20:16 +0800
+#Subject: Modify header files
+
+diff -Naur libiberty/libiberty/fibheap.c libiberty-ch/libiberty/fibheap.c
+--- a/libiberty/fibheap.c	2022-06-23 10:57:21.852365861 +0800
++++ b/libiberty/fibheap.c	2022-06-23 11:06:10.579842556 +0800
+@@ -22,9 +22,9 @@
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+-#ifdef HAVE_LIMITS_H
++//#ifdef HAVE_LIMITS_H
+ #include <limits.h>
+-#endif
++//#endif
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
+diff -Naur libiberty/libiberty/pex-unix.c libiberty-ch/libiberty/pex-unix.c
+--- a/libiberty/pex-unix.c	2022-06-23 10:57:21.856365952 +0800
++++ b/libiberty/pex-unix.c	2022-06-23 11:07:47.477860195 +0800
+@@ -42,9 +42,9 @@
+ 
+ #include <sys/types.h>
+ 
+-#ifdef HAVE_FCNTL_H
++//#ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+-#endif
++//#endif
+ #ifdef HAVE_SYS_WAIT_H
+ #include <sys/wait.h>
+ #endif

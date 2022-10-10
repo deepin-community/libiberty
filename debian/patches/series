@@ -1,0 +1,3 @@
+use-ldflags.diff
+uniontech001_modify_header_files.patch
+add-sunway-support.patch
